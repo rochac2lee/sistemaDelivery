@@ -1,0 +1,369 @@
+<?php
+
+ob_start();
+session_start();
+
+if (!isset($_SESSION['usuario_pwcimbessul']) && (!isset($_SESSION['senha_pwcimbessul']))){
+  header("Location: login"); exit;
+}
+
+try {
+  $conexao = new PDO('mysql:host=localhost;dbname=SIG', 'root', 'cim123');
+  $conexao -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch(PDOException $e) {
+  echo 'Houve um Erro na conexao com o banco de dados: ' . $e -> getMessage();
+}
+
+$email = $_SESSION['usuario_pwcimbessul'];
+$senha = $_SESSION['senha_pwcimbessul'];
+
+// pega o IP do usuário
+$ip = $_SERVER['REMOTE_ADDR'];
+
+date_default_timezone_set('America/Brasilia');
+$dateTime = date('d/m/Y H:i');
+$year     = date('Y');
+$month    = date('m');
+
+  switch ($month) {
+    case 1:
+      $monthname = "Janeiro";
+      break;
+    case 2:
+      $monthname = "Fevereiro";
+      break;
+    case 3:
+      $monthname = "Março";
+      break;
+    case 4:
+      $monthname = "Abril";
+      break;
+    case 5:
+      $monthname = "Maio";
+      break;
+    case 6:
+      $monthname = "Junho";
+      break;
+    case 7:
+      $monthname = "Julho";
+      break;
+    case 8:
+      $monthname = "Agosto";
+      break;
+    case 9:
+      $monthname = "Setembro";
+      break;
+    case 10:
+      $monthname = "Outubro";
+      break;
+    case 11:
+      $monthname = "Novembro";
+      break;
+    case 12:
+      $monthname = "Dezembro";
+  }
+
+  $selectConfigActual = "SELECT
+              titulo_site,
+              SEO_meta_titulo,
+              SEO_meta_descricao,
+              SEO_meta_keywords,
+              SEO_meta_autor,
+              conteudo_pagina,
+              conteudo_rodape,
+              endereco_site,
+              analytics_codigo,
+              logo_sistema,
+              logo_login,
+              nome_empresa,
+              cnpj,
+              telefone,
+              linkedin,
+              endereco_completo,
+              descricao_sistema,
+              versao_sistema,
+              data_criacao,
+              data_atualizacao
+            FROM
+              tb_configs
+            ORDER BY id_config DESC LIMIT 1
+            ";
+  $result = $conexao -> prepare($selectConfigActual);
+  $result -> execute();
+  $countUsersActual = $result->rowCount();
+
+  if ($data_configActual = $result->fetch()) {
+    do {
+
+      $titulo_site        = $data_configActual['titulo_site'];
+      $SEO_meta_titulo    = $data_configActual['SEO_meta_titulo'];
+      $SEO_meta_descricao = $data_configActual['SEO_meta_descricao'];
+      $SEO_meta_keywords  = $data_configActual['SEO_meta_keywords'];
+      $SEO_meta_autor     = $data_configActual['SEO_meta_autor'];
+      $conteudo_pagina    = $data_configActual['conteudo_pagina'];
+      $conteudo_rodape    = $data_configActual['conteudo_rodape'];
+      $endereco_site      = $data_configActual['endereco_site'];
+      $analytics_codigo   = $data_configActual['analytics_codigo'];
+      $logo_sistema       = $data_configActual['logo_sistema'];
+      $logo_login         = $data_configActual['logo_login'];
+      $nome_empresa       = $data_configActual['nome_empresa'];
+      $cnpj_empresa       = $data_configActual['cnpj'];
+      $telefone_empresa   = $data_configActual['telefone'];
+      $linkedin_empresa   = $data_configActual['linkedin'];
+      $endereco_completo  = $data_configActual['endereco_completo'];
+      $descricao_sistema  = $data_configActual['descricao_sistema'];
+      $versao_sistema     = $data_configActual['versao_sistema'];
+      $data_criacao       = $data_configActual['data_criacao'];
+      $data_atualizacao   = $data_configActual['data_atualizacao'];
+
+    } while ($data_configActual = $result->fetch());
+  }
+
+
+?>
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  <title>SIG CIMBESSUL</title>
+
+  <link rel='shortcut icon' type='image/x-icon' href='../images/favicon.ico' />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+  <script defer src="https://use.fontawesome.com/releases/v5.7.1/js/all.js" integrity="sha384-eVEQC9zshBn0rFj4+TU78eNA19HMNigMviK/PU/FFjLXqa/GKPgX58rvt5Z8PLs7" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+  <link rel="stylesheet" href="css/style.css">
+
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+
+</head>
+
+<body style="    height: -webkit-fill-available;
+    background: url(http://backgroundcheckall.com/wp-content/uploads/2017/12/ppt-background-themes-hd-4.jpg);
+    background-size: cover;
+    min-height: 550px;" class="animated fadeIn">
+
+      <script>
+      $(document).ready(function() {
+        $(".serv-0").click(function() {
+          window.location.href = "../../index.php?mod=financial"; //Financeiro
+        });
+        $(".serv-1").click(function() {
+          window.location.href = "../../index.php?mod=warehouse"; //Almoxarifado
+        });
+        $(".serv-2").click(function() {
+          window.location.href = "../../index.php?mod=product_stock"; //Estoque
+        });
+        $(".serv-3").click(function() {
+          window.location.href = "../../index.php?mod=hr"; //Recursos Humanos
+        });
+        $(".serv-4").click(function() {
+          window.location.href = "../../index.php?mod=security"; //Tecnologia da Informação
+        });
+        $(".serv-5").click(function() {
+          window.location.href = "../../index.php?mod=work_safety"; //Seguraça do Trabalho
+        });
+        $(".serv-6").click(function() {
+          window.location.href = "../../index.php?mod=upkeep"; //Manutenção
+        });
+      });
+      </script>
+
+<div style="display: none">
+<i class="fa fa-dollar-sign" id="fin" style="color: #fff;"></i>
+<i class="fa fa-archive" id="alm" style="color: #fff;"></i>
+<i class="fa fa-box-open" id="estoque" style="color: #fff;"></i>
+<i class="fa fa-users-cog" id="rh" style="color: #fff;"></i>
+<i class="fa fa-shield-alt" id="seg_pat" style="color: #fff;"></i>
+<i class="fa fa-hard-hat" id="seg_trab" style="color: #fff;"></i>
+<i class="fa fa-tools" id="manut" style="color: #fff;"></i>
+</div>
+
+  <div class="container">
+  <svg id="circle-nav-services" width="100%" height="100%" style="margin-top: 5%;" viewBox="0 0 650 550">
+    <defs>
+    <filter id="service-shadow" height="2" width="2" y="-.5" x="-.5">
+      <feOffset result="offOut" in="SourceGraphic" dx="0" dy="5" />
+      <feGaussianBlur result="blurOut" in="offOut" stdDeviation="12" />
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+    </filter>
+  </defs>
+
+    <symbol id="circle-nav-copy" viewBox="0 0 300 300">
+      <defs>
+        <style>
+          .cls-1 {
+            font-size: 28px;
+            font-family: Roboto-Bold, Roboto;
+            font-weight: 700;
+          }
+
+          .cls-2 {
+            letter-spacing: -0.02em;
+          }
+
+          .cls-3 {
+            letter-spacing: -0.01em;
+          }
+
+          .cls-4 {
+            letter-spacing: -0.01em;
+          }
+
+          .cls-5 {
+            font-size: 16px;
+            font-family: Roboto-Regular, Roboto;
+          }
+
+          .cls-6 {
+            letter-spacing: -0.01em;
+          }
+
+          .cls-7 {
+            letter-spacing: -0.01em;
+          }
+
+          .cls-8 {
+            letter-spacing: -0.02em;
+          }
+
+          .cls-9 {
+            letter-spacing: -0.01em;
+          }
+
+          .cls-10 {
+            letter-spacing: 0.01em;
+          }
+
+          .cls-11 {
+            letter-spacing: -0.01em;
+          }
+
+          .cls-12 {
+            letter-spacing: -0.04em;
+          }
+
+          .cls-13 {
+            letter-spacing: -0.02em;
+          }
+
+          .cls-14 {
+            letter-spacing: 0.01em;
+          }
+
+          .cls-15 {
+            letter-spacing: -0.01em;
+          }
+
+          .cls-16 {
+            letter-spacing: -0.06em;
+          }
+
+          .cls-17 {
+            letter-spacing: -0.02em;
+          }
+
+          .cls-18 {
+            letter-spacing: 0.01em;
+          }
+
+          .cls-19 {
+            letter-spacing: 0.02em;
+          }
+
+          .cls-20 {
+            letter-spacing: -0.01em;
+          }
+
+          .cls-21 {
+            letter-spacing: -0.03em;
+          }
+        </style>
+      </defs>
+    </symbol>
+
+    <!-- arc travelled by the pointer -->
+    <svg x="150" y="0" width="350" height="350" viewBox="0 0 500 500">
+      <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="250.2542" y1="496.283" x2="250.2542" y2="-.2102">
+        <stop offset="0" stop-color="#0F68A9"/>
+        <stop offset="1" stop-color="#3DDEED" stop-opacity="0"/>
+      </linearGradient>
+      <path fill="url(#a)" d="M250.3 0c137 0 248.1 111.1 248.1 248.1S387.3 496.2 250.3 496.2 2.2 385.1 2.2 248.1 113.2 0 250.3 0C112.5 0 .8 111.7.8 249.5S112.5 499 250.3 499s249.5-111.7 249.5-249.5S388 0 250.3 0z"/>
+    </svg>
+
+    <g id="service-collection">
+      <!-- this gets filled dynamically -->
+    </g>
+
+    <filter id="this_image" x="0%" y="0%" width="100%" height="100%">
+        <feImage xlink:href="../images/part_logo.png"/>
+    </filter>
+    <circle cx="325" cy="170" r="140" class="center" filter="url(#this_image)"/>
+    <use x="185" y="30" width="280" height="280" xlink:href="#circle-nav-copy" class="nav-copy"/>
+  </svg>
+</div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.2/TweenMax.min.js'></script>
+
+
+
+    <script  src="js/index.js"></script>
+
+
+
+
+</body>
+
+</html>
+
+<?php
+
+  if(isset($_REQUEST['sair'])){
+
+date_default_timezone_set('America/Brasilia');
+$dateTime = date('d/m/Y H:i');
+
+  $usuario = $_SESSION['usuario_pwcimbessul'];
+  $senha   = $_SESSION['senha_pwcimbessul'];
+
+    $selectLogin = "SELECT nome_completo, id_usuario from tb_usuarios WHERE email='$usuario'";
+
+    $resultLogin = $conexao -> prepare($selectLogin);
+    $resultLogin -> execute();
+    $countLogin = $resultLogin->rowCount();
+
+    if ($data_login = $resultLogin->fetch()) {
+      do {
+
+        $allNomeLogin   = $data_login['nome_completo'];
+        $idUsuarioLogin = $data_login['id_usuario'];
+        $single         = explode(" ", $allNomeLogin);
+        $nome           = $single[0];
+
+        $conexao->beginTransaction();
+
+        $conexao->exec("INSERT INTO tb_log (tipo_evento, id_usuario, evento, data_hora, id_log)
+                VALUES('Logout', '$idUsuarioLogin', '$nome saiu do sistema', '$dateTime', '')" );
+
+          $conexao->exec("DELETE FROM online WHERE ip = '$ip'");
+
+        $conexao->commit();
+
+      } while ($data_login = $resultLogin->fetch());
+    }
+
+    session_destroy();
+    session_unset($_SESSION['usuario_pwcimbessul']);
+    session_unset($_SESSION['senha_pwcimbessul']);
+    header("Location: login");
+  }
+
+?>
